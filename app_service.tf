@@ -24,6 +24,11 @@ variable "subscription" {
     type = string
 }
 
+variable "application_port" {
+    type = number
+    default = 80
+}
+
 # this bit is to help generate a globally unique ACR for each subscription webapp pair
 resource "random_integer" "acr_id" {
     min = 100000
@@ -115,6 +120,7 @@ resource "azurerm_app_service" "main" {
         "DOCKER_REGISTRY_SERVER_URL"          = "https://${azurerm_container_registry.acr.login_server}"
         "DOCKER_REGISTRY_SERVER_USERNAME"     = "${azurerm_container_registry.acr.admin_username}"
         "DOCKER_REGISTRY_SERVER_PASSWORD"     = "${azurerm_container_registry.acr.admin_password}"
+        "WEBSITES_PORT"                       = var.application_port
     }
 
     # This will be changed by GitHub action as it pushes new versions, terraform should ignore
